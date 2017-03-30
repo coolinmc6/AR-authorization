@@ -71,6 +71,12 @@ mongod
 - We made the connection to the MongoDB local instance after installing Robomongo
 
 - finish L68
+- to get up and running:
+```sh
+npm run dev 
+mongod 				# separate tab
+```
+  - launch Robomongo
 
 ## Lecture 69: Authentication Controller
 
