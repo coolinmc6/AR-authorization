@@ -43,6 +43,41 @@ npm install --save nodemon
 ```
 - We also added a script in our package.json file so that we can just do `npm run dev` to start up our server.
 Any subsequent changes made to our server file will automatically reset the server.
+- To get started:
+```sh
+npm run dev
+```
+  - check out `localhost:3090` to see it
+
+## Lecture 66: Mongoose Models
+- We are going to be working on a library that sits on top of MongoDB called Mongoose, an ORM
+- we already have Mongoose installed
+- We are going to create a user model
+- This is what we have thus far:
+  - everything is in the `server` directory right now
+  - we created our router and passed in some dummy output to check that it works and it does
+  - after creating our router, we added `router(app)` to our `index.js` page to handle the request
+  - we also created a `models` directory and `models/user.js` file for our User model.  I have some good
+  notes in there about what each part is doing
+
+## Lecture 67: MongoDB Setup
+- install MongoDB: [https://docs.mongodb.com/manual/tutorial/install-mongodb-on-os-x/](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-os-x/)
+- to run mongodb
+```sh
+mongod
+```
+- We add the DB part to our index.js file to make our connection to mongodb
+- We downloaded and installed [Robomongo](https://robomongo.org/download)
+- We made the connection to the MongoDB local instance after installing Robomongo
+
+- finish L68
+
+## Lecture 69: Authentication Controller
+
+
+
+
+
 
 
 
