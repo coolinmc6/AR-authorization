@@ -169,7 +169,9 @@ const ModelClass = mongoose.model('user', userSchema);
 // Export the model
 module.exports = ModelClass;
 ```
+- finished L73, start L74 next
 
+## Lecture 74: JWT Overview
 
 
 
