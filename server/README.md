@@ -172,6 +172,141 @@ module.exports = ModelClass;
 - finished L73, start L74 next
 
 ## Lecture 74: JWT Overview
+- right now, in authentication.js, we are simply sending back `success: true`, which doesn't really do anything for us.
+we want to send back that identifying token that the user can use to make authenticated requests
+- User ID + Our Secret String = JSON Web Token
+  - It sounds like: JWT = encrypted(User ID + Secret string)
+- This means that a user can give us our JSON Web Token + Our Secret String, we'll be able to get our User ID
+  - User submits JWT: decrypt(JWT, Secret String) => User ID
+
+## Lecture 75: Creating a JWT
+```sh
+npm install --save jwt-simple
+```
+- We created `/server/config.js` to create our secret key.  This key must remain unknown to everyone and so we added
+`config.js` to our `.gitignore` file.  This is the format:
+```js
+module.exports = {
+  secret: 'random-string-of-characters'
+};
+```
+- We updated our `authentication.js` file to bring in the jwt-simple library:
+```js
+const jwt = require('jwt-simple');
+const User = require('../models/user');
+const config = require('../config');
+
+function tokenForUser(user) {
+  const timestamp = new Date().getTime();
+  return jwt.encode({ sub: user.id, iat: timestamp }, config.secret)
+}
+
+// CODE
+
+// this saves the record to the database
+user.save(function(err) {
+  if(err) { return next(err); }
+
+  // Respond to request indicating the user was created
+  res.json({ token: tokenForUser(user)}); // UPDATED
+});
+```
+  - first we create the token in `tokenForUser(user)` and then we return the token in our response near the bottom
+- jwt.io => json web token info
+
+## Lecture 76: Installing Passport
+```sh
+npm install --save passport passport-jwt
+```
+- We need an authentication layer, which is Passport
+- Incoming Request -> Passport -> Route Handler
+- In Passport, a strategy is a method for authenticating a user
+- in the last section, we imported one strategy, ExtractJwt
+- This is what we have after lecture 76 & 77:
+```
+// server/services/passport.js
+const passport = require('passport');
+const User = require('../models/user');
+const config = require('../config');
+const JwtStrategy = require('passport-jwt').Strategy;
+const ExtractJwt = require('passport-jwt').ExtractJwt;
+
+// Setup options for JWT strategy
+const jwtOptions = {};
+
+// Create JWT strategy
+// payload = decoded jwt token; has the 'sub' and 'iat' properties from authentication.js
+// done is a callback function that we need to call depending on whether or not we successfully authenticate the user
+const jwtLogin = new JwtStrategy(jwtOptions, function(payload, done) {
+  // see if the user ID in the payload exists in our database
+  // if it does, call 'done' with that other
+  // otherwise, call done without a user object
+  User.findById(payload.sub, function(err, user) {
+    // err is populated only if it fails
+    if (err) { return done(err, false); }
+
+    if(user) {
+      done(null, user);
+    } else {
+      done(null, false);
+    }
+  });
+});
+
+// Tell Passport to use this strategy
+```
+
+## Lecture 78: Using Strategies with Passport
+- strategies are "plugins" that work with passport
+- Passport is a library we use to figure out whether or not our user is authenticated to user our application
+- we have to tell the strategy where to look to find the jwt
+
+## Lecture 79: Making an Authenticated Request
+- In this section, we added the `jwtOptions` to `passport.js`
+- We also updated router.js
+```js
+const Authentication = require('./controllers/authentication')
+const passportService = require('./services/passport')
+const passport = require('passport');
+
+const requireAuth = passport.authenticate('jwt', { session: false});  // NEW
+
+module.exports = function(app) {
+  // rec = request; res = response; next = mostly for error handling
+  app.get('/', requireAuth, function(req, res) {
+    res.send({ hi: 'there'});
+  })
+  app.post('/signup', Authentication.signup)
+}
+```
+- We were able to successfully send a get request to our dummy route that was successfully authorized.  To do
+that:
+```
+// router.js
+app.get('/', requireAuth, function(req, res) {
+  res.send({ hi: 'there'});
+})
+```
+- In Postman, we sent a get request to `localhost:3090/` and then updated our headers to contain a (property? key?)
+called 'authorization' and we entered our token.  It succeeded! 
+
+## Lecture 80: Signing in with Local Strategy
+
+```sh
+npm install --save passport-local
+```
+
+## Lecture 82: Bcrypt Full Circle
+
+
+## Lecture 85: Server Review
+
+
+
+
+
+
+
 
 
 
